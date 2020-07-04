@@ -119,7 +119,7 @@
   import NavBar from "components/common/navbar/NavBar";
   import TabControl from "components/content/tabControl/TabControl";
 
-  import {getHomeMultidata} from "network/home";
+  import { getHomeMultidata, getHomeGoods } from "network/home";
 
   export default {
     name: "Home",
@@ -132,22 +132,33 @@
         recommends:[],
         goods:{
           'pop':{page: 0, list:[]},
-          'news':{page: 0, list:[]},
+          'new':{page: 0, list:[]},
           'sell':{page: 0, list:[]},
         }
       }
     },
     created() {
       // 1 请求多个数据
-      getHomeMultidata().then(res =>{
-        // console.log(res);
-        this.banners = res.data.banner.list;
-        this.recommends = res.data.recommend.list;
-      })
+      this.getHomeMultidata();
+      // 2 请求商品数据
+      this.getHomeGoods('pop');
+      this.getHomeGoods('new');
+      this.getHomeGoods('sell');
     },
-
     methods:{
-
+      getHomeMultidata(){
+        getHomeMultidata().then(res =>{
+          // console.log(res);
+          this.banners = res.data.banner.list;
+          this.recommends = res.data.recommend.list;
+        })
+      },
+      getHomeGoods(type){
+        const page = this.goods[type].page + 1
+        getHomeGoods(type, page).then(res =>{
+          console.log(res);
+        })
+      }
     },
 
   }
